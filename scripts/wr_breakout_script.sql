@@ -37,7 +37,7 @@ select
 	, t2.fantasy_points_ppr as pred_fantasy_points
 	, ((t2.fantasy_points_ppr - t1.fantasy_points_ppr) / NULLIF(t1.fantasy_points_ppr,0)::FLOAT)::DECIMAL(5,2) AS pct_increase
 	, CASE WHEN ((t2.fantasy_points_ppr - t1.fantasy_points_ppr) / NULLIF(t1.fantasy_points_ppr,0)::FLOAT)::DECIMAL(5,2) >= .25
-	AND t2.fantasy_points_ppr >= 10 AND t2.targets > 10 THEN 1 ELSE 0 END AS breakout
+	AND t2.fantasy_points_ppr >= 13 AND t2.targets > 10 THEN 1 ELSE 0 END AS breakout
 FROM 
 (select
 	a.player_id
