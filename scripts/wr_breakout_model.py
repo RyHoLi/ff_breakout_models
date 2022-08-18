@@ -27,7 +27,7 @@ predictions = [round(value) for value in y_pred]
 
 accuracy = accuracy_score(y_test, predictions)
 print("Accuracy: %.2f%%" % (accuracy * 100.0))
-# 98.78%
+# 94.89%
 
 predict_set = model_data_df[model_data_df['season'] == 2021]
 predict_set2 = predict_set.iloc[:, np.r_[2:8, 9:33]]
