@@ -157,6 +157,6 @@ JOIN (SELECT player_id, season, COUNT(*) as gp FROM nfl_weekly WHERE targets >= 
 ON (a.player_id = c.player_id AND a.season = c.season )
 WHERE b.position = 'WR') t2 
 ON (t1.player_id = t2.player_id
-AND t1.season = t2.season - 1)
+AND t1.season = t2.season - 1);
 
-COPY wr_breakout_data TO 'C:/Users/Ryan/OneDrive/Documents/nfl_models/data/wr_breakout_data.csv' csv header;
+COPY wr_breakout_data TO 'C:/Users/Ryan/Documents/nfl_models/breakout_players/data/wr_breakout_data.csv' csv header;

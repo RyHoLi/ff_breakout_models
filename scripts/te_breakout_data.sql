@@ -37,8 +37,8 @@ select
 	, t1.fantasy_points_ppr
 	, t2.fantasy_points_ppr as pred_fantasy_points
 	, ((t2.fantasy_points_ppr - t1.fantasy_points_ppr) / NULLIF(t1.fantasy_points_ppr,0)::FLOAT)::DECIMAL(5,2) AS pct_increase
-	, CASE WHEN ((t2.fantasy_points_ppr - t1.fantasy_points_ppr) / NULLIF(t1.fantasy_points_ppr,0)::FLOAT)::DECIMAL(5,2) >= .25
-	AND t2.fantasy_points_ppr >= 5 AND t2.targets > 10 THEN 1 ELSE 0 END AS breakout
+	, CASE WHEN (((t2.fantasy_points_ppr - t1.fantasy_points_ppr) / NULLIF(t1.fantasy_points_ppr,0)::FLOAT)::DECIMAL(5,2) >= .3
+	OR t2.fantasy_points_ppr >= 14) AND t2.targets > 10 THEN 1 ELSE 0 END AS breakout
 FROM 
 (select
 	a.player_id
@@ -158,6 +158,6 @@ JOIN (SELECT player_id, season, COUNT(*) as gp FROM nfl_weekly WHERE targets >= 
 ON (a.player_id = c.player_id AND a.season = c.season )
 WHERE b.position = 'TE') t2 
 ON (t1.player_id = t2.player_id
-AND t1.season = t2.season - 1)
+AND t1.season = t2.season - 1);
 
-COPY te_breakout_data TO 'C:/Users/Ryan/OneDrive/Documents/nfl_models/data/te_breakout_data.csv' csv header;
+COPY te_breakout_data TO 'C:/Users/Ryan/Documents/nfl_models/breakout_players/data/te_breakout_data.csv' csv header;

@@ -31,10 +31,8 @@ select
 	, t2.fantasy_points as pred_fantasy_points
 	, ((t2.fantasy_points - t1.fantasy_points) / NULLIF(t1.fantasy_points,0)::FLOAT)::DECIMAL(5,2) AS pct_increase
 	, CASE 
-		WHEN ((t2.fantasy_points - t1.fantasy_points) / NULLIF(t1.fantasy_points,0)::FLOAT)::DECIMAL(5,2) >= .2
-		AND t2.fantasy_points >= 19 AND t2.gp >= 12 THEN 1	
-		WHEN ((t2.fantasy_points - t1.fantasy_points) / NULLIF(t1.fantasy_points,0)::FLOAT)::DECIMAL(5,2) >= .3
-		AND t2.fantasy_points >= 17 AND t2.gp >= 12 THEN 1	
+		WHEN (((t2.fantasy_points - t1.fantasy_points) / NULLIF(t1.fantasy_points,0)::FLOAT)::DECIMAL(5,2) >= .25
+		OR t2.fantasy_points >= 18) AND t2.gp >= 12 THEN 1			
 		ELSE 0
 	END AS breakout
 FROM 
@@ -87,7 +85,7 @@ FROM
 	, (fantasy_points::float / NULLIF(gp,0))::DECIMAL(5,2) AS fantasy_points
 FROM nfl_seasonal a
 JOIN player_mapping b ON (a.player_id = b.gsis_id)
-JOIN (SELECT player_id, season, COUNT(*) as gp FROM nfl_weekly WHERE attempts >= 1 GROUP BY 1,2) c 
+JOIN (SELECT player_id, season, COUNT(*) as gp FROM nfl_weekly WHERE (attempts >= 1 OR carries >= 1) GROUP BY 1,2) c 
 ON (a.player_id = c.player_id AND a.season = c.season )
 WHERE b.position = 'QB') t1
 LEFT JOIN 
@@ -127,7 +125,7 @@ JOIN (SELECT player_id, season, COUNT(*) as gp FROM nfl_weekly WHERE attempts >=
 ON (a.player_id = c.player_id AND a.season = c.season ) 
 WHERE b.position = 'QB') t2 
 ON (t1.player_id = t2.player_id
-AND t1.season = t2.season - 1)
+AND t1.season = t2.season - 1);
 
-COPY qb_breakout_data TO 'C:/Users/Ryan/OneDrive/Documents/nfl_models/data/qb_breakout_data.csv' csv header;
+COPY qb_breakout_data TO 'C:/Users/Ryan/Documents/nfl_models/breakout_players/data/qb_breakout_data.csv' csv header;
 

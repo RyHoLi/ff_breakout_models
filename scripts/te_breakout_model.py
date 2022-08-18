@@ -28,7 +28,7 @@ predictions = [round(value) for value in y_pred]
 
 accuracy = accuracy_score(y_test, predictions)
 print("Accuracy: %.2f%%" % (accuracy * 100.0))
-
+# 77.88%
 
 predict_set = model_data_df[model_data_df['season'] == 2021]
 predict_set2 = predict_set.iloc[:, np.r_[2:8, 9:32]]
@@ -39,8 +39,9 @@ predictions = pd.DataFrame(model.predict(predict_set3), columns = ['classificati
 prob_predictions = pd.DataFrame(model.predict_proba(predict_set3), columns = ['prob_0', 'prob_1'])
 
 
-labels = pd.DataFrame(model_data_df[model_data_df['season'] == 2021]['name'])
+labels = pd.DataFrame(model_data_df[model_data_df['season'] == 2021][['name', 'fantasy_points_ppr']])
 
 final_df = pd.concat([labels.reset_index(drop=True), prob_predictions.reset_index(drop=True), predictions.reset_index(drop=True)], axis=1)
+final_df['prob_pred_fpts'] = final_df['fantasy_points_ppr'] * 1.3
 
-final_df.to_csv('C:/Users/Ryan/Documents/nfl_models/breakout_players/data/te_breakout_predictions.csv', index=False)
+final_df.sort_values(by=['prob_1', 'prob_pred_fpts'], ascending=False).to_csv('C:/Users/Ryan/Documents/nfl_models/breakout_players/data/te_breakout_predictions.csv', index=False)
