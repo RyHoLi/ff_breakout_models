@@ -4,10 +4,12 @@ from xgboost import XGBClassifier
 from sklearn.preprocessing import MinMaxScaler
 from sklearn.metrics import accuracy_score
 import numpy as np
+from sklearn.metrics import accuracy_score, confusion_matrix, roc_auc_score, roc_curve, auc
+from sklearn import metrics
+import matplotlib.pyplot as plt
+
 
 model_data_df = pd.read_csv('C:/Users/Ryan/Documents/nfl_models/breakout_players/data/rb_breakout_data.csv')
-
-
 
 df_predictors = model_data_df.iloc[:, np.r_[2:8, 9:31]]
 df_predictors = df_predictors[df_predictors['season'] < 2021]
@@ -30,6 +32,43 @@ predictions = [round(value) for value in y_pred]
 accuracy = accuracy_score(y_test, predictions)
 print("Accuracy: %.2f%%" % (accuracy * 100.0))
 # 79.55%
+
+precision = metrics.precision_score(y_test, predictions)
+print("Precision: %.2f%%" % (precision * 100.0))
+# 60%
+
+# Sensitivity (Recall)
+sensitivity_recall = metrics.recall_score(y_test, predictions)
+print("Sensitivity: %.2f%%" % (sensitivity_recall * 100.0))
+# 25%
+
+# Specificity
+specificity = metrics.recall_score(y_test, predictions, pos_label=0)
+print("Specificity: %.2f%%" % (specificity * 100.0))
+# 98.76%
+
+# Confusion Matrix
+confusion_matrix = metrics.confusion_matrix(y_test, predictions)
+cm_display = metrics.ConfusionMatrixDisplay(confusion_matrix = confusion_matrix, display_labels = [False, True])
+cm_display.plot()
+plt.show()
+
+# ROC Curve
+# Compute ROC curve and ROC area for each class
+probs= model.predict_proba(X_test)
+preds = probs[:,1]
+fpr, tpr, threshold = metrics.roc_curve(y_test, preds)
+roc_auc = metrics.auc(fpr, tpr)
+
+plt.title('Receiver Operating Characteristic')
+plt.plot(fpr, tpr, 'b', label = 'AUC = %0.2f' % roc_auc)
+plt.legend(loc = 'lower right')
+plt.plot([0, 1], [0, 1],'r--')
+plt.xlim([0, 1])
+plt.ylim([0, 1])
+plt.ylabel('True Positive Rate')
+plt.xlabel('False Positive Rate')
+plt.show()
 
 predict_set = model_data_df[model_data_df['season'] == 2021]
 predict_set2 = predict_set.iloc[:, np.r_[2:8, 9:31]]
